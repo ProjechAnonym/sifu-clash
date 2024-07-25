@@ -1,0 +1,43 @@
+providers:
+  - path: https://naiyun0315.xn--8stx8olrwkucjq3b.com/api/v1/client/subscribe?token=745f0f059c5256cf9b2e4cc4fc87ee81
+    proxy: false
+    name: 奈云
+    remote: true
+  - path: https://sub2.smallstrawberry.com/api/v1/client/subscribe?token=01b5b92d76a64a1bbe331c77c53e818a
+    proxy: true
+    name: 一元
+    remote: true
+
+rulesets:
+  - type: "remote"
+    tag: "china-ip"
+    format: "binary"
+    url: "https://github.com/MetaCubeX/meta-rules-dat/raw/sing/geo/geoip/cn.srs"
+    download_detour: "select"
+    update_interval: "1d"
+    china: true
+    label: "china"
+    ip: true
+  - type: "remote"
+    tag: "china-site"
+    format: "binary"
+    url: "https://github.com/MetaCubeX/meta-rules-dat/raw/sing/geo/geosite/cn.srs"
+    download_detour: "select"
+    update_interval: "1d"
+    china: true
+    label: "china"
+    ip: false
+  - type: "remote"
+    tag: "youtube"
+    format: "binary"
+    url: "https://github.com/MetaCubeX/meta-rules-dat/raw/sing/geo/geosite/youtube.srs"
+    download_detour: "select"
+    update_interval: "1d"
+    china: false
+    ip: false
+  - type: "local"
+    tag: "openai"
+    format: "binary"
+    path: "/opt/singbox/openai.srs"
+    china: false
+    ip: false
