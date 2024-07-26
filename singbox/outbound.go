@@ -1,7 +1,13 @@
 package singbox
 
-import "sifu-clash/models"
+import (
+	"sifu-clash/models"
+)
 
-func MergeOutbound(provider models.Provider,template string) {
-	FetchProxies(provider.Path,provider.Name,template)
+func MergeOutbound(provider models.Provider,template string) ([]map[string]interface{},error){
+	proxies,err := FetchProxies(provider.Path,provider.Name,template)
+	if err != nil {
+		return nil,nil
+	}
+	return proxies,nil
 }

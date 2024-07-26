@@ -11,7 +11,7 @@ type Ruleset struct {
 	Update_interval string `json:"update_interval,omitempty" gorm:"not null;type:varchar(255)" yaml:"update_interval,omitempty"`
 	Label           string `json:"-" gorm:"type:varchar(255);" yaml:"label,omitempty"`
 	China           bool   `json:"-" gorm:"not null;bool" yaml:"china"`
-	Ip              bool   `json:"-" gorm:"not null;bool" yaml:"ip"`
+	DnsRule         string `json:"-" gorm:"not null;bool" yaml:"dnsRule,omitempty"`
 }
 type Provider struct {
 	Id     uint64 `json:"-" gorm:"primaryKey" yaml:"-"`

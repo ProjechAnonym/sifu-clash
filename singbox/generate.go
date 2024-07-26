@@ -18,10 +18,14 @@ func merge(key,projectDir string,template models.Template,mode bool,providers []
 			defer jobs.Done()
 			tempTemplate := clone.Clone(template).(models.Template)
 			tempTemplate.Route.Rule_set = append(tempTemplate.Route.Rule_set,SetRulesets(serviceMap)...)
-			tempTemplate.Route.Rules = append(tempTemplate.Route.Rules,SetRules(serviceMap,false)...)
-			tempTemplate.Dns.Rules = append(tempTemplate.Dns.Rules,SetRules(serviceMap,true)...)
-			MergeOutbound(provider,key)
-			json,_:= json.MarshalIndent(template,"","  ")
+			tempTemplate.Route.Rules = append(tempTemplate.Route.Rules,SetRules(serviceMap)...)
+			tempTemplate.Dns.Rules = append(tempTemplate.Dns.Rules,SetDnsRules(serviceMap)...)
+			proxies,err := MergeOutbound(provider,key)
+			if err != nil {
+				utils.LoggerCaller("合并provider配置失败",err,1)
+			}
+			tempTemplate.Outbounds = append(tempTemplate.Outbounds,proxies...)
+			json,_:= json.MarshalIndent(tempTemplate,"","  ")
 			utils.FileWrite(json,filepath.Join(projectDir,"static",key,fmt.Sprintf("%s.json",provider.Name)))
 		}()
 	}

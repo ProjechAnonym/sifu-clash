@@ -17,10 +17,12 @@ func FetchProxies(url,name,template string) ([]map[string]interface{},error) {
 
 	c.OnResponse(func(r *colly.Response) {
 		var results []map[string]interface{}
+		
 		content := map[string]interface{}{}
 		if err = yaml.Unmarshal(r.Body, &content); err != nil {
 			utils.LoggerCaller(fmt.Sprintf("解析'%s'yaml配置文件失败",name), err, 1)
-			base64msg, err := base64.StdEncoding.DecodeString(string(r.Body))
+			var base64msg []byte
+			base64msg, err = base64.StdEncoding.DecodeString(string(r.Body))
 			if err != nil {
 				utils.LoggerCaller(fmt.Sprintf("'%s'base64解码失败",name), err, 1)
 				return
@@ -30,7 +32,9 @@ func FetchProxies(url,name,template string) ([]map[string]interface{},error) {
 				utils.LoggerCaller(fmt.Sprintf("生成'%s'配置文件失败",name), err, 1)
 			}
 		} else {
-			results, err = ParseYaml(content, name, template)
+			if proxiesMsg,ok := content["proxies"].([]interface{}); ok {
+				results, err = ParseYaml(proxiesMsg, name)
+			}
 			if err != nil {
 				utils.LoggerCaller(fmt.Sprintf("生成'%s'配置文件失败",name), err, 1)
 			}
@@ -39,7 +43,7 @@ func FetchProxies(url,name,template string) ([]map[string]interface{},error) {
 	})
 
 	c.OnError(func(r *colly.Response, e error) {
-		utils.LoggerCaller(fmt.Sprintf("连接%s失败", r.Request.URL.Host), e, 1)
+		utils.LoggerCaller(fmt.Sprintf("连接'%s'失败", name), e, 1)
 		err = e
 		request_url := r.Request.URL
 		params := request_url.Query()

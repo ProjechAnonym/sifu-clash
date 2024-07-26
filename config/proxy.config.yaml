@@ -17,7 +17,6 @@ rulesets:
     update_interval: "1d"
     china: true
     label: "china"
-    ip: true
   - type: "remote"
     tag: "china-site"
     format: "binary"
@@ -26,7 +25,7 @@ rulesets:
     update_interval: "1d"
     china: true
     label: "china"
-    ip: false
+    dnsRule: "internal"
   - type: "remote"
     tag: "youtube"
     format: "binary"
@@ -34,10 +33,10 @@ rulesets:
     download_detour: "select"
     update_interval: "1d"
     china: false
-    ip: false
+    dnsRule: "external"
   - type: "local"
     tag: "openai"
     format: "binary"
     path: "/opt/singbox/openai.srs"
     china: false
-    ip: false
+    dnsRule: "external"
