@@ -33,7 +33,17 @@ outbounds:
     { type: direct, tag: direct },
     { type: block, tag: block },
   ]
-
+# customOutbounds:
+#   [
+#     {
+#       tag: 自建,
+#       type: shadowsocks,
+#       server: https://example.com,
+#       server_port: 999,
+#       method: "chacha20-ietf-poly1305",
+#       password: "6e999edc-67d2-4719-b085-46fbf6383fd9",
+#     },
+#   ]
 route:
   rule_set: []
   rules:

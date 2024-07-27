@@ -61,12 +61,12 @@ func formatYaml(proxyMap map[string]interface{}) (proxy map[string]interface{},e
 		}
 		proxy = trojan
 	default:
-		// 如果协议类型不在支持的范围内,返回错误
+		utils.LoggerCaller("协议未预置",fmt.Errorf("没有预置'%s'协议", protocolType),1)
 		return nil, fmt.Errorf("没有预置'%s'协议", protocolType)
 	}
 	return proxy, err
 }
-func ParseUrl(urls []string, name, template string) ([]map[string]interface{}, error) {
+func ParseUrl(urls []string, name string) ([]map[string]interface{}, error) {
 	if len(urls) == 0 {
         return nil, fmt.Errorf("没有节点信息")
     }
@@ -85,7 +85,6 @@ func ParseUrl(urls []string, name, template string) ([]map[string]interface{}, e
     return proxies, nil
 }
 func formatUrl(url string)(proxy map[string]interface{},err error){
-	
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("recovered from panic: %v", r)
@@ -119,7 +118,7 @@ func formatUrl(url string)(proxy map[string]interface{},err error){
 		}
 		proxy = trojan
 	default:
-		// 如果协议类型不在支持的范围内,则返回错误
+		utils.LoggerCaller("协议未预置",fmt.Errorf("没有预置'%s'协议", protocolType),1)
 		return nil, fmt.Errorf("没有预置'%s'协议", protocolType)
 	}
 	return proxy, err

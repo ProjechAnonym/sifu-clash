@@ -10,7 +10,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func FetchProxies(url,name,template string) ([]map[string]interface{},error) {
+func FetchProxies(url,name string) ([]map[string]interface{},error) {
 	var proxies []map[string]interface{}
 	var err error
 	c := colly.NewCollector()
@@ -27,13 +27,15 @@ func FetchProxies(url,name,template string) ([]map[string]interface{},error) {
 				utils.LoggerCaller(fmt.Sprintf("'%s'base64解码失败",name), err, 1)
 				return
 			}
-			results, err = ParseUrl(strings.Split(string(base64msg), "\n"), name, template)
+			results, err = ParseUrl(strings.Split(string(base64msg), "\n"), name)
 			if err != nil {
 				utils.LoggerCaller(fmt.Sprintf("生成'%s'配置文件失败",name), err, 1)
 			}
 		} else {
 			if proxiesMsg,ok := content["proxies"].([]interface{}); ok {
 				results, err = ParseYaml(proxiesMsg, name)
+			}else{
+				err = fmt.Errorf("'%s'配置没有proxies字段",name)
 			}
 			if err != nil {
 				utils.LoggerCaller(fmt.Sprintf("生成'%s'配置文件失败",name), err, 1)

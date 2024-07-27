@@ -12,6 +12,7 @@ import (
 )
 func merge(key,projectDir string,template models.Template,mode bool,providers []models.Provider,serviceMap map[string][]models.Ruleset) []error{
 	var jobs sync.WaitGroup
+	errChannel := make(chan error,len(providers))
 	for _,provider := range providers{
 		jobs.Add(1)
 		go func(){
@@ -20,17 +21,46 @@ func merge(key,projectDir string,template models.Template,mode bool,providers []
 			tempTemplate.Route.Rule_set = append(tempTemplate.Route.Rule_set,SetRulesets(serviceMap)...)
 			tempTemplate.Route.Rules = append(tempTemplate.Route.Rules,SetRules(serviceMap)...)
 			tempTemplate.Dns.Rules = append(tempTemplate.Dns.Rules,SetDnsRules(serviceMap)...)
-			proxies,err := MergeOutbound(provider,key)
+			proxies,err := MergeOutbound(provider,serviceMap,tempTemplate.CustomOutbounds)
 			if err != nil {
-				utils.LoggerCaller("合并provider配置失败",err,1)
+				utils.LoggerCaller(fmt.Sprintf("模板'%s'与'%s'节点合并失败",key,provider.Name),err,1)
+				errChannel <- fmt.Errorf("模板'%s'与'%s'节点合并失败",key,provider.Name)
+				return
 			}
 			tempTemplate.Outbounds = append(tempTemplate.Outbounds,proxies...)
-			json,_:= json.MarshalIndent(tempTemplate,"","  ")
-			utils.FileWrite(json,filepath.Join(projectDir,"static",key,fmt.Sprintf("%s.json",provider.Name)))
+			json,err := json.MarshalIndent(tempTemplate,"","  ")
+			if err != nil {
+				utils.LoggerCaller("json序列化失败",err,1)
+				errChannel <- fmt.Errorf("模板'%s'与'%s'节点合并失败",key,provider.Name)
+				return
+			}
+			var label string
+			if mode {
+				md5label,err := utils.EncryptionMd5(provider.Name)
+				if err != nil {
+					utils.LoggerCaller("md5加密失败",err,1)
+					errChannel <- fmt.Errorf("模板'%s'与'%s'节点合并失败",key,provider.Name)
+					return
+				}
+				label = md5label
+			}else{
+				label = provider.Name
+			}
+			if err := utils.FileWrite(json,filepath.Join(projectDir,"static",key,fmt.Sprintf("%s.json",label)));err != nil {
+				utils.LoggerCaller("写入文件失败",err,1)
+				errChannel <- fmt.Errorf("模板'%s'与'%s'节点合并失败",key,provider.Name)
+				return
+			}
+			utils.LoggerCaller(fmt.Sprintf("模板'%s'与'%s'节点合并成功",key,provider.Name),nil,1)
 		}()
 	}
 	jobs.Wait()
-	return nil
+	close(errChannel)
+	var errs []error
+	for err := range errChannel{
+		errs = append(errs,err)
+	}
+	return errs
 }
 func Workflow(specific ...int) []error {
 	projectDir,err := utils.GetValue("project-dir")
@@ -60,6 +90,7 @@ func Workflow(specific ...int) []error {
 	newProviders,errs := AddClashTag(providers,specific...)
 	newRulesets := SortRulesets(rulesets)
 	var workflow sync.WaitGroup
+	errChannel := make(chan error,len(newProviders) * len(templates.(map[string]models.Template)))
 	server,err := utils.GetValue("mode")
     if err != nil{
         utils.LoggerCaller("获取服务模式配置失败",err,1)
@@ -70,9 +101,16 @@ func Workflow(specific ...int) []error {
 		workflow.Add(1)
 		go func(){
 			defer workflow.Done()
-			merge(key,projectDir.(string),value,mode,newProviders,newRulesets)
+			errors := merge(key,projectDir.(string),value,mode,newProviders,newRulesets)
+			for _,err := range errors{
+				errChannel <- err
+			}
 		}()
 	}
 	workflow.Wait()
+	close(errChannel)
+	for err := range errChannel{
+		errs = append(errs,err)
+	}
 	return errs
 }

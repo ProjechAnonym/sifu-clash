@@ -7,6 +7,10 @@ providers:
     proxy: true
     name: 一元
     remote: true
+  - path: C:/Users/Lenovo/Desktop/config/一元.yaml
+    proxy: false
+    name: 一元机场
+    remote: false
 
 rulesets:
   - type: "remote"

@@ -22,7 +22,7 @@ type Dns struct {
 	Independent_cache bool                     `json:"independent_cache,omitempty" yaml:"independent_cache,omitempty"`
 	Reverse_mapping   bool                     `json:"reverse_mapping,omitempty" yaml:"reverse_mapping,omitempty"`
 	Client_subnet     string                   `json:"client_subnet,omitempty" yaml:"client_subnet,omitempty"`
-	Fakeip            FakeIP                   `json:"fakeip,omitempty" yaml:"fakeip,omitempty"`
+	Fakeip            *FakeIP                  `json:"fakeip,omitempty" yaml:"fakeip,omitempty"`
 	Servers           []DnsServer              `json:"servers" yaml:"servers"`
 	Rules             []map[string]interface{} `json:"rules" yaml:"rules"`
 }
@@ -36,12 +36,13 @@ type Route struct {
 	Default_mark          uint                     `json:"default_mark,omitempty" yaml:"default_mark,omitempty"`
 }
 type Template struct {
-	Name         string                   `json:"-" yaml:"-"`
-	Log          map[string]interface{}   `json:"log,omitempty" yaml:"log,omitempty"`
-	Ntp          map[string]interface{}   `json:"ntp,omitempty" yaml:"ntp,omitempty"`
-	Experimental map[string]interface{}   `json:"experimental,omitempty" yaml:"experimental,omitempty"`
-	Inbounds     []map[string]interface{} `json:"inbounds" yaml:"inbounds"`
-	Dns          Dns                      `json:"dns" yaml:"dns"`
-	Route        Route                    `json:"route" yaml:"route"`
-	Outbounds    []map[string]interface{} `json:"outbounds" yaml:"outbounds"`
+	Name            string                   `json:"-" yaml:"-"`
+	Log             map[string]interface{}   `json:"log,omitempty" yaml:"log,omitempty"`
+	Ntp             map[string]interface{}   `json:"ntp,omitempty" yaml:"ntp,omitempty"`
+	Experimental    map[string]interface{}   `json:"experimental,omitempty" yaml:"experimental,omitempty"`
+	Inbounds        []map[string]interface{} `json:"inbounds" yaml:"inbounds"`
+	Dns             Dns                      `json:"dns" yaml:"dns"`
+	Route           Route                    `json:"route" yaml:"route"`
+	Outbounds       []map[string]interface{} `json:"outbounds" yaml:"outbounds"`
+	CustomOutbounds []map[string]interface{} `json:"-" yaml:"customOutbounds,omitempty"`
 }
