@@ -12,8 +12,12 @@ func SetRulesets(serviceMap map[string][]models.Ruleset) []models.Ruleset {
 	}
 	return newRulesets
 }
-func SetRules(serviceMap map[string][]models.Ruleset) []map[string]interface{}{
+func SetRules(serviceMap map[string][]models.Ruleset,provider models.Provider) []map[string]interface{}{
 	var rules []map[string]interface{}
+	if provider.Remote{
+		rules = append(rules, map[string]interface{}{"domain":provider.Path,"outbound":"select"})
+	}
+	
 	for key,rulesets := range serviceMap{
 		if key == ""{
 			for _,ruleset := range(rulesets){
@@ -38,7 +42,6 @@ func SetRules(serviceMap map[string][]models.Ruleset) []map[string]interface{}{
 				rules = append(rules, map[string]interface{}{"rule_set": rulesetsList,"outbound":fmt.Sprintf("select-%s",label)})
 			}
 		}
-		
 	}
 	return rules
 }

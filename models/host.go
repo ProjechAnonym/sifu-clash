@@ -6,7 +6,7 @@ type Host struct {
 	Username    string `json:"username" gorm:"not null;type:varchar(20)"`
 	Password    string `json:"password" gorm:"not null;type:varchar(255)"`
 	Localhost   bool   `json:"localhost" gorm:"not null;type:bool"`
-	Proxy       string `json:"proxy" gorm:"type:varchar(255)"`
+	Config      string `json:"config" gorm:"type:varchar(255)"`
 	Fingerprint string `json:"-" gorm:"type:varchar(255)"`
 	Secret      string `json:"secret" gorm:"type:varchar(255)"`
 	Port        uint16 `json:"port" gorm:"not null;type:uint16"`

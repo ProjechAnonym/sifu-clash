@@ -3,8 +3,14 @@ package main
 import (
 	"os"
 	"path/filepath"
+	"sifu-clash/middleware"
+	"sifu-clash/models"
+	"sifu-clash/route"
 	"sifu-clash/singbox"
 	"sifu-clash/utils"
+
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 )
 
 func init() {
@@ -29,5 +35,21 @@ func init() {
 	utils.LoggerCaller("服务启动成功",nil,1)
 }
 func main() {
-	singbox.Workflow()
+	serverMode,err := utils.GetValue("mode")
+	if err != nil {
+		utils.LoggerCaller("获取服务模式失败",err,1)
+		os.Exit(2)
+	}
+	if serverMode.(models.Server).Mode {
+		gin.SetMode(gin.ReleaseMode)
+		server := gin.Default()
+		server.Use(middleware.Logger(),middleware.Recovery(true),cors.New(middleware.Cors()))
+		apiGroup := server.Group("/api")
+		apiGroup.GET("verify",middleware.TokenAuth())
+		route.SettingHost(apiGroup)
+		route.SettingFiles(apiGroup)
+		server.Run(serverMode.(models.Server).Listen)
+	}else{
+		singbox.Workflow()
+	}
 }

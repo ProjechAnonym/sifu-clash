@@ -19,7 +19,7 @@ func merge(key,projectDir string,template models.Template,mode bool,providers []
 			defer jobs.Done()
 			tempTemplate := clone.Clone(template).(models.Template)
 			tempTemplate.Route.Rule_set = append(tempTemplate.Route.Rule_set,SetRulesets(serviceMap)...)
-			tempTemplate.Route.Rules = append(tempTemplate.Route.Rules,SetRules(serviceMap)...)
+			tempTemplate.Route.Rules = append(tempTemplate.Route.Rules,SetRules(serviceMap,provider)...)
 			tempTemplate.Dns.Rules = append(tempTemplate.Dns.Rules,SetDnsRules(serviceMap)...)
 			proxies,err := MergeOutbound(provider,serviceMap,tempTemplate.CustomOutbounds)
 			if err != nil {
