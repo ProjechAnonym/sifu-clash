@@ -86,7 +86,37 @@ func DeleteProxy(proxy map[string][]int) error{
     }
     var deletemsg string
 	if len(proxy["providers"]) != 0 {
-		if err := utils.MemoryDb.Delete(&models.Provider{},proxy["providers"]).Error; err != nil {
+		var tempProviders []models.Provider
+		var deleteProviders []models.Provider
+		if err := utils.MemoryDb.Find(&tempProviders,proxy["providers"]).Error; err != nil {
+			utils.LoggerCaller("获取待删除机场配置失败", err, 1)
+			return fmt.Errorf("获取待删除机场配置失败")
+		}
+		for _,tempProvider := range(tempProviders){
+			md5Label,err := utils.EncryptionMd5(tempProvider.Name)
+			if err != nil {
+				utils.LoggerCaller("加密md5失败",err,1)
+				return fmt.Errorf("加密md5失败")
+			}
+			templates,err := utils.GetValue("templates")
+			if err != nil {
+				utils.LoggerCaller("获取模板配置失败", err, 1)
+				return fmt.Errorf("获取模板配置失败")
+			}
+			for key := range(templates.(map[string]models.Template)){
+				if err := utils.FileDelete(filepath.Join(projectDir.(string), "static", key, md5Label + ".json")); err != nil {
+					utils.LoggerCaller(fmt.Sprintf("删除'%s'目录下的'%s'配置文件失败",key,tempProvider.Name),err,1)
+				}
+			}
+			if !tempProvider.Remote{
+				if err := utils.FileDelete(tempProvider.Path); err != nil {
+					utils.LoggerCaller("删除yaml文件失败",err,1)
+				}else {
+					deleteProviders = append(deleteProviders, tempProvider)
+				}
+			}
+        }
+		if err := utils.MemoryDb.Delete(&deleteProviders).Error; err != nil {
 			utils.LoggerCaller("删除机场配置失败", err, 1)
 			deletemsg = deletemsg + err.Error()
 		}
@@ -147,8 +177,9 @@ func DeleteProxy(proxy map[string][]int) error{
                 }
             }
             if changeTag{
-                if err := utils.DiskDb.Where("url = ?",host.Url).Update("config","").Error;err != nil{
-                    return err
+                if err := utils.DiskDb.Model(&models.Host{}).Where("url = ?",host.Url).Update("config","").Error; err != nil{
+					utils.LoggerCaller("更换主机配置失败",err,1)
+                    return fmt.Errorf("更换主机配置失败")
                 }
             }
         }
