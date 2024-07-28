@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"io"
 	"os"
 	"path/filepath"
 )
@@ -70,4 +71,45 @@ func FileDelete(dst string) error{
         return err
     }
 	return nil
+}
+
+func FileCopy(src, dst string) error{
+    // 打开源文件
+    srcFile, err := os.Open(src)
+    if err != nil {
+        return err
+    }
+    // 确保在函数返回前关闭源文件
+    defer srcFile.Close()
+    
+    // 创建或打开目标文件,以读写模式,并设置指定的权限
+    targetFile, err := os.OpenFile(dst, os.O_CREATE|os.O_RDWR|os.O_TRUNC, 0644)
+    if err != nil {
+        return err
+    }
+    // 确保在函数返回前关闭目标文件
+    defer targetFile.Close()
+    
+    // 使用io.Copy函数将源文件的内容复制到目标文件
+    if _,err = io.Copy(targetFile,srcFile);err != nil{
+        return err
+    }
+    
+    // 如果复制成功,返回nil
+    return nil
+}
+
+func FileRead(src string) ([]byte,error){
+    // 打开源文件
+    srcFile, err := os.Open(src)
+    if err != nil {
+        return nil,err
+    }
+    // 确保在函数返回前关闭源文件
+    defer srcFile.Close()
+    content,err := io.ReadAll(srcFile)
+    if err != nil {
+        return nil,err
+    }
+    return content,nil
 }

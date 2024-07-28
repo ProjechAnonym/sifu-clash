@@ -7,10 +7,6 @@ providers:
       proxy: true
       path: https://sub2.smallstrawberry.com/api/v1/client/subscribe?token=01b5b92d76a64a1bbe331c77c53e818a
       remote: true
-    - name: 一元机场
-      proxy: false
-      path: C:/Users/Lenovo/Desktop/config/一元.yaml
-      remote: false
 rulesets:
     - type: remote
       url: https://github.com/MetaCubeX/meta-rules-dat/raw/sing/geo/geoip/cn.srs
@@ -35,11 +31,5 @@ rulesets:
       tag: youtube
       download_detour: select
       update_interval: 1d
-      china: false
-      dnsRule: external
-    - type: local
-      path: /opt/singbox/openai.srs
-      format: binary
-      tag: openai
       china: false
       dnsRule: external
