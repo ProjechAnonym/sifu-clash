@@ -35,7 +35,7 @@ func SettingHost(group *gin.RouterGroup) {
 		// 判断IP是否指向本机
         isLocalhost,err := controller.IsLocalhost(content.Url) 
 		if err != nil{
-			ctx.JSON(http.StatusInternalServerError, gin.H{"message": err})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 			return
 		}
 		content.Localhost = isLocalhost

@@ -8,7 +8,9 @@ import (
 func SetRulesets(serviceMap map[string][]models.Ruleset) []models.Ruleset {
 	var newRulesets []models.Ruleset
 	for _, rulesets := range serviceMap {
-		newRulesets = append(newRulesets, rulesets...)
+		for _,ruleset := range(rulesets){
+			newRulesets = append(newRulesets, models.Ruleset{Type: ruleset.Type, Tag: ruleset.Tag, Download_detour: ruleset.Download_detour, Format: ruleset.Format, Path: ruleset.Path, Update_interval: ruleset.Update_interval, Url: ruleset.Url})
+		}
 	}
 	return newRulesets
 }

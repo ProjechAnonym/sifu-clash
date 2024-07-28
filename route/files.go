@@ -24,7 +24,7 @@ func SettingFiles(group *gin.RouterGroup) {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"message": "获取工作目录失败"})
 		}
 		if err := controller.VerifyLink(token); err != nil {
-			ctx.JSON(http.StatusUnauthorized, gin.H{"message": err})
+			ctx.JSON(http.StatusUnauthorized, gin.H{"message": err.Error()})
 			return
 		}
 		ctx.Header("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, label))
@@ -34,7 +34,7 @@ func SettingFiles(group *gin.RouterGroup) {
 	route.GET("fetch",middleware.TokenAuth(),func(ctx *gin.Context){
 		links, err := controller.FetchLinks()
 		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"message": err})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 			return
 		}
 		ctx.JSON(http.StatusOK, links)

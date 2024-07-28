@@ -8,6 +8,7 @@ import (
 	"sifu-clash/route"
 	"sifu-clash/singbox"
 	"sifu-clash/utils"
+	"sync"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -41,6 +42,7 @@ func main() {
 		os.Exit(2)
 	}
 	if serverMode.(models.Server).Mode {
+		var proxyLock sync.Mutex
 		gin.SetMode(gin.ReleaseMode)
 		server := gin.Default()
 		server.Use(middleware.Logger(),middleware.Recovery(true),cors.New(middleware.Cors()))
@@ -48,6 +50,7 @@ func main() {
 		apiGroup.GET("verify",middleware.TokenAuth())
 		route.SettingHost(apiGroup)
 		route.SettingFiles(apiGroup)
+		route.SettingProxy(apiGroup,&proxyLock)
 		server.Run(serverMode.(models.Server).Listen)
 	}else{
 		singbox.Workflow()
