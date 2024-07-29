@@ -75,21 +75,21 @@ func MarshalVmess(proxyMap map[string]interface{}) (map[string]interface{},error
 	return vmessMap, nil
 }
 func Base64Vmess(link string) (map[string]interface{},error){
-    // 移除链接前缀"vmess://",获取base64编码的配置信息
+    
 	info := strings.TrimPrefix(link, "vmess://")
-    // 解码base64编码的配置信息
+    
 	var decodedInfo []byte
 	var err error
 	decodedInfo, err = base64.URLEncoding.DecodeString(info)
 	if err != nil {
 		return nil,err
 	}
-    // 将解码后的信息反序列化为map格式
+    
 	var proxyMap map[string]interface{}
 	if err := json.Unmarshal(decodedInfo,&proxyMap);err != nil{
 		return nil,err
 	}
-    // 从map中提取并转换端口号和alter_id
+    
 	port,err := strconv.Atoi(proxyMap["port"].(string))
 	if err != nil {
 		return nil,err
@@ -98,7 +98,7 @@ func Base64Vmess(link string) (map[string]interface{},error){
 	if err != nil {
 		return nil,err
 	}
-    // 判断tls是否启用,以及是否需要跳过证书验证
+    
 	var tlsEnable bool
 	if _,err := GetMapValue(proxyMap,"tls"); err != nil {
 		tlsEnable = false
@@ -108,21 +108,21 @@ func Base64Vmess(link string) (map[string]interface{},error){
 	
 	skipCert,err := GetMapValue(proxyMap,"skip-cert-verify")
 	if err != nil {
-        // 记录未找到skip_cert_verify键的日志,设置为跳过证书验证,并返回错误
+        
 		skipCert = true
 	}
 	sni,err := GetMapValue(proxyMap,"sni")
 	if err != nil{
-        // 记录未找到sni键的日志,设置sni为空字符串,并返回错误
+        
 		sni = ""
 	}
-    // 根据提取的信息,构建tls配置
+    
 	tls := models.Tls{
 		Enabled: tlsEnable,
 		Insecure: skipCert.(bool),
 		Server_name: sni.(string),
 	}
-    // 根据提取的信息,构建vmess配置
+    
 	vmess := models.Vmess{
 		Type: "vmess",
 		Tag: proxyMap["ps"].(string),
@@ -134,7 +134,7 @@ func Base64Vmess(link string) (map[string]interface{},error){
 		Tls: &tls,
 	}
 
-    // 根据网络类型设置传输协议
+    
 	switch proxyMap["net"].(string) {
 		case "ws":
 			transport := models.WebSocket{
@@ -145,7 +145,7 @@ func Base64Vmess(link string) (map[string]interface{},error){
 			}
 			vmess.Transport = transport
 		}
-    // 将vmess配置转换为map格式,并返回
+    
 	vmessMap,err := Struct2map(vmess,"vmess")
 	if err != nil {
 		return nil,err

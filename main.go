@@ -42,7 +42,7 @@ func main() {
 		os.Exit(2)
 	}
 	if serverMode.(models.Server).Mode {
-		var proxyLock sync.Mutex
+		var lock sync.Mutex
 		gin.SetMode(gin.ReleaseMode)
 		server := gin.Default()
 		server.Use(middleware.Logger(),middleware.Recovery(true),cors.New(middleware.Cors()))
@@ -50,7 +50,7 @@ func main() {
 		apiGroup.GET("verify",middleware.TokenAuth())
 		route.SettingHost(apiGroup)
 		route.SettingFiles(apiGroup)
-		route.SettingProxy(apiGroup,&proxyLock)
+		route.SettingProxy(apiGroup,&lock)
 		server.Run(serverMode.(models.Server).Listen)
 	}else{
 		singbox.Workflow()

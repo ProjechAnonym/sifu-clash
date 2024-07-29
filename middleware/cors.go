@@ -14,8 +14,8 @@ func Cors() cors.Config {
 		utils.LoggerCaller("获取运行模式失败",err,1)
 	}
 	origins := serverConfig.(models.Server).Cors
-	// var allow_origins = make([]string, len(origins))
-	// copy(allow_origins, origins)
+	
+	
 	coresConfig := cors.Config{
 		AllowOrigins:     origins,
 		AllowMethods:     []string{"PUT", "PATCH", "POST", "GET","DELETE"},

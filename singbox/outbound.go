@@ -11,20 +11,20 @@ import (
 
 func outboundSelect(tags []string,label string) map[string]interface{} {
     selectMap := map[string]interface{}{"type":"selector","interrupt_exist_connections":false,"tag":label} 
-	// 将"auto"标签添加到标签切片中,确保自动选择选项可用
+	
     tags = append(tags, "auto")
-    // 将更新后的标签切片赋值回select_map中的"outbounds"字段
+    
     selectMap["outbounds"] = tags
-    // 返回更新后的select_map以及nil错误
+    
     return selectMap
 }
-// outbound_auto 根据给定的标签和模板生成自动外发配置
-// 参数tags是用于外发的标签列表,template是配置模板的字符串
-// 返回一个包含外发配置的map以及可能的错误
+
+
+
 func outboundAuto(tags []string) map[string]interface{}{
     autoMap := map[string]interface{}{"type":"urltest","interrupt_exist_connections":false,"tag":"auto"}
     autoMap["outbounds"] = tags
-    // 返回更新后的自动外发配置以及nil错误
+    
     return autoMap
 }
 func MergeOutbound(provider models.Provider,serviceMap map[string][]models.Ruleset,outbounds []map[string]interface{}) ([]map[string]interface{},error){

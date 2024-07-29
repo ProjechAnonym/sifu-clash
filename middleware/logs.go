@@ -13,7 +13,7 @@ import (
 	"go.uber.org/zap"
 )
 
-// GinLogger 接收gin框架默认的日志
+
 func Logger() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		start := time.Now()
@@ -35,13 +35,13 @@ func Logger() gin.HandlerFunc {
 	}
 }
 
-// GinRecovery recover掉项目可能出现的panic
+
 func Recovery(stack bool) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		defer func() {
 			if err := recover(); err != nil {
-				// Check for a broken connection, as it is not really a
-				// condition that warrants a panic stack trace.
+				
+				
 				var brokenPipe bool
 				if ne, ok := err.(*net.OpError); ok {
 					if se, ok := ne.Err.(*os.SyscallError); ok {
@@ -57,8 +57,8 @@ func Recovery(stack bool) gin.HandlerFunc {
 						zap.Any("错误", err),
 						zap.String("request", string(httpRequest)),
 					)
-					// If the connection is dead, we can't write a status to it.
-					c.Error(err.(error)) // nolint: errcheck
+					
+					c.Error(err.(error)) 
 					c.Abort()
 					return
 				}
