@@ -36,8 +36,11 @@ func SettingProxy(group *gin.RouterGroup,lock *sync.Mutex) {
         }
         
         if errs := controller.AddItems(proxy,lock); len(errs) != 0 {
-            var 
-            ctx.JSON(http.StatusInternalServerError, gin.H{"message": err})
+            var errors []string
+            for _,addErr := range errs {
+                errors = append(errors, addErr.Error())
+            }
+            ctx.JSON(http.StatusInternalServerError, gin.H{"message": errors})
             return
         }
         
