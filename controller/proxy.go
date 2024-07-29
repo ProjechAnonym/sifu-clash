@@ -3,7 +3,9 @@ package controller
 import (
 	"fmt"
 	"path/filepath"
+	"sifu-clash/execute"
 	"sifu-clash/models"
+	"sifu-clash/singbox"
 	"sifu-clash/utils"
 	"sync"
 
@@ -72,7 +74,38 @@ func AddItems(newProxy models.Proxy, lock *sync.Mutex) []error {
 	if len(addMsg) != 0{
 		return addMsg
     }
+	for {
+		if lock.TryLock() {
+			break
+		}
+	}
+	defer lock.Unlock()
 
+	var hosts []models.Host
+	if err := utils.DiskDb.Find(&hosts).Error; err != nil {
+		utils.LoggerCaller("获取主机列表失败", err, 1)
+		return []error{fmt.Errorf("获取主机列表失败")}
+	}
+	var errs []error
+	if len(newProxy.Rulesets) == 0 {
+		var specific []int
+		for _,provider := range(newProxy.Providers){
+			specific = append(specific,int(provider.Id))
+		}
+		errs = singbox.Workflow(specific...)
+		if len(errs) != 0 {
+			return errs
+		}
+	} else {
+		errs = singbox.Workflow()
+		if len(errs) != 0 {
+			return errs
+		}
+		errs = execute.GroupUpdate(hosts,newProviders,lock)
+		if len(errs) != 0 {
+			return errs
+		}
+	}
     return nil
 }
 

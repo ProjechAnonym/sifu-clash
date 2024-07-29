@@ -55,7 +55,7 @@ func ExecUpdate(label string, providers []models.Provider, host models.Host,spec
 	
 	originalPath := "/opt/singbox/config.json"
 	backupPath := filepath.Join(projectDir.(string), "backup", backupFile+".json")
-	newPath := filepath.Join(projectDir.(string), "static", "Default", newFile+".json")
+	newPath := filepath.Join(projectDir.(string), "static", "default", newFile+".json")
 
 	
 	if err := UpdateFile(originalPath, newPath, backupPath, host); err != nil {
@@ -89,15 +89,6 @@ func ExecUpdate(label string, providers []models.Provider, host models.Host,spec
 }
 
 func GroupUpdate(hosts []models.Host, providers []models.Provider, lock *sync.Mutex) []error{
-    
-	for {
-		if lock.TryLock() {
-			break
-		}
-	}
-    
-	defer lock.Unlock()
-	
     
 	var hostsWorkflow sync.WaitGroup
 	hostsWorkflow.Add(len(hosts) + 1)

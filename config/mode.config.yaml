@@ -1,4 +1,4 @@
-mode: false
+mode: true
 token: sifu
 cors:
   - "*"

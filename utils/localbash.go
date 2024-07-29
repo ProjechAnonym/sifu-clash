@@ -91,11 +91,8 @@ func CommandExec(command string,args ...string) ([]string,[]string,error){
 	if procErrsTag {
 		return results,errors,fmt.Errorf("get pipe output failed")
 	}
-
-    
 	if err = cmd.Wait();err != nil {
 		return results,errors,err
 	}
-    
 	return results,errors,nil
 }

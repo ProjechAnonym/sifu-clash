@@ -111,7 +111,7 @@ func CheckService(service string,host models.Host) (bool,error){
 	}else{
 		results,errors,err = utils.CommandSsh(host,"systemctl", "status", service)
 	}
-	if err != nil {
+	if err != nil && err.Error() != "exit status 3" {
 		utils.LoggerCaller("获取服务运行状态失败",err,1)
 		return false,err
 	}

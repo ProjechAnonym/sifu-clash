@@ -85,7 +85,6 @@ func Workflow(specific ...int) []error {
 			return []error{fmt.Errorf("获取provider配置失败")}
 		}
 	}
-	fmt.Println(providers)
 	if len(providers) == 0 {
 		utils.LoggerCaller("provider配置为空",nil,1)
 		return []error{fmt.Errorf("provider配置为空")}
