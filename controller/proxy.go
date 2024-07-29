@@ -69,10 +69,10 @@ func AddItems(newProxy models.Proxy, lock *sync.Mutex) []error {
         utils.LoggerCaller("写入proxy配置文件失败", err, 1)
         return []error{fmt.Errorf("写入proxy配置文件失败")}
     }
-
 	if len(addMsg) != 0{
 		return addMsg
     }
+
     return nil
 }
 

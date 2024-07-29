@@ -74,10 +74,18 @@ func Workflow(specific ...int) []error {
 		return []error{fmt.Errorf("获取模板配置失败")}
 	}
 	var providers []models.Provider
-	if err := utils.MemoryDb.Find(&providers).Error; err != nil {
-		utils.LoggerCaller("获取provider配置失败",err,1)
-		return []error{fmt.Errorf("获取provider配置失败")}
+	if len(specific) == 0 {
+		if err := utils.MemoryDb.Find(&providers).Error; err != nil {
+			utils.LoggerCaller("获取provider配置失败",err,1)
+			return []error{fmt.Errorf("获取provider配置失败")}
+		}
+	}else{
+		if err := utils.MemoryDb.Find(&providers,specific).Error; err != nil {
+			utils.LoggerCaller("获取provider配置失败",err,1)
+			return []error{fmt.Errorf("获取provider配置失败")}
+		}
 	}
+	fmt.Println(providers)
 	if len(providers) == 0 {
 		utils.LoggerCaller("provider配置为空",nil,1)
 		return []error{fmt.Errorf("provider配置为空")}
@@ -87,7 +95,7 @@ func Workflow(specific ...int) []error {
 		utils.LoggerCaller("获取ruleset配置失败",err,1)
 		return []error{fmt.Errorf("获取ruleset配置失败")}
 	}
-	newProviders,errs := AddClashTag(providers,specific...)
+	newProviders,errs := AddClashTag(providers)
 	newRulesets := SortRulesets(rulesets)
 	var workflow sync.WaitGroup
 	errChannel := make(chan error,len(newProviders) * len(templates.(map[string]models.Template)))

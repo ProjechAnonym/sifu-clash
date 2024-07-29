@@ -10,7 +10,7 @@ import (
 	"github.com/huandu/go-clone"
 )
 
-func AddClashTag(providers []models.Provider,specific ...int) ([]models.Provider,[]error){
+func AddClashTag(providers []models.Provider) ([]models.Provider,[]error){
 	var errors []error
 	for i,provider := range providers {
 		if provider.Remote{
@@ -33,9 +33,6 @@ func AddClashTag(providers []models.Provider,specific ...int) ([]models.Provider
 				providers[i].Path = parsedUrl.String()
 			}
 		}
-	}
-	if len(specific) != 0{
-		return []models.Provider{providers[specific[0]]},errors
 	}
 	return providers,errors
 }
