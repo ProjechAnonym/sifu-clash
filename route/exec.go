@@ -35,4 +35,15 @@ func SettingExec(group *gin.RouterGroup,lock *sync.Mutex,cronTask *cron.Cron,id 
         // 如果更新成功,则返回成功的响应
         ctx.JSON(http.StatusOK, gin.H{"message": true})
 	})
+    route.GET("refresh",func(ctx *gin.Context) {
+        if errs := controller.RefreshItems(lock); errs != nil {
+            errors := make([]string, len(errs))
+            for i, err := range errs {
+                errors[i] = err.Error()
+            }
+            ctx.JSON(http.StatusInternalServerError, gin.H{"message": errors})
+            return
+        }
+        ctx.JSON(http.StatusOK, gin.H{"message": true})
+    })
 }

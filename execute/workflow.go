@@ -95,8 +95,9 @@ func GroupUpdate(hosts []models.Host, providers []models.Provider, lock *sync.Mu
 				break
 			}
 		}
+		defer lock.Unlock()
 	}
-	defer lock.Unlock()
+	
 	var hostsWorkflow sync.WaitGroup
 	hostsWorkflow.Add(len(hosts) + 1)
 	

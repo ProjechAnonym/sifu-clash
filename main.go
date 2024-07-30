@@ -54,7 +54,7 @@ func main() {
 				return
 			}
 			var providers []models.Provider
-			if err := utils.DiskDb.Find(&providers).Error; err != nil {
+			if err := utils.MemoryDb.Find(&providers).Error; err != nil {
 				utils.LoggerCaller("获取代理集合失败",err,1)
 				return 
 			}
