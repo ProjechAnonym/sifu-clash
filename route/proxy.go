@@ -57,9 +57,12 @@ func SettingProxy(group *gin.RouterGroup,lock *sync.Mutex) {
         }
         
         
-        if err := controller.DeleteProxy(deleteMap); err != nil {
-            
-            ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        if errs := controller.DeleteProxy(deleteMap,lock); len(errs) != 0 {
+            var errors []string
+            for _,addErr := range errs {
+                errors = append(errors, addErr.Error())
+            }
+            ctx.JSON(http.StatusInternalServerError, gin.H{"error": errors})
             return
         }
         

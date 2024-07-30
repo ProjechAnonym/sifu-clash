@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"path/filepath"
+	"sifu-clash/execute"
 	"sifu-clash/middleware"
 	"sifu-clash/models"
 	"sifu-clash/route"
@@ -12,6 +13,7 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/robfig/cron/v3"
 )
 
 func init() {
@@ -43,6 +45,22 @@ func main() {
 	}
 	if serverMode.(models.Server).Mode {
 		var lock sync.Mutex
+		cronTask := cron.New()
+		cronId,_ := cronTask.AddFunc("@every 1m",func() {
+			utils.LoggerCaller("定时任务启动",nil,1)
+			var hosts []models.Host
+			if err := utils.DiskDb.Find(&hosts).Error; err != nil {
+				utils.LoggerCaller("获取主机集合失败",err,1)
+				return
+			}
+			var providers []models.Provider
+			if err := utils.DiskDb.Find(&providers).Error; err != nil {
+				utils.LoggerCaller("获取代理集合失败",err,1)
+				return 
+			}
+			execute.GroupUpdate(hosts,providers,&lock,true)
+		})
+		cronTask.Start()
 		gin.SetMode(gin.ReleaseMode)
 		server := gin.Default()
 		server.Use(middleware.Logger(),middleware.Recovery(true),cors.New(middleware.Cors()))
@@ -51,6 +69,7 @@ func main() {
 		route.SettingHost(apiGroup)
 		route.SettingFiles(apiGroup)
 		route.SettingProxy(apiGroup,&lock)
+		route.SettingExec(apiGroup,&lock,cronTask,&cronId)
 		server.Run(serverMode.(models.Server).Listen)
 	}else{
 		singbox.Workflow()

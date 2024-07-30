@@ -88,8 +88,15 @@ func ExecUpdate(label string, providers []models.Provider, host models.Host,spec
 	return nil
 }
 
-func GroupUpdate(hosts []models.Host, providers []models.Provider, lock *sync.Mutex) []error{
-    
+func GroupUpdate(hosts []models.Host, providers []models.Provider, lock *sync.Mutex,only bool) []error{
+    if only {
+		for {
+			if lock.TryLock(){
+				break
+			}
+		}
+	}
+	defer lock.Unlock()
 	var hostsWorkflow sync.WaitGroup
 	hostsWorkflow.Add(len(hosts) + 1)
 	

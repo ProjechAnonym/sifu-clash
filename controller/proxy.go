@@ -101,7 +101,7 @@ func AddItems(newProxy models.Proxy, lock *sync.Mutex) []error {
 		if len(errs) != 0 {
 			return errs
 		}
-		errs = execute.GroupUpdate(hosts,newProviders,lock)
+		errs = execute.GroupUpdate(hosts,newProviders,lock,false)
 		if len(errs) != 0 {
 			return errs
 		}
@@ -109,32 +109,32 @@ func AddItems(newProxy models.Proxy, lock *sync.Mutex) []error {
     return nil
 }
 
-func DeleteProxy(proxy map[string][]int) error{
+func DeleteProxy(proxy map[string][]int,lock *sync.Mutex) []error{
     
     projectDir, err := utils.GetValue("project-dir")
     if err != nil {
         
         utils.LoggerCaller("获取工作目录失败", err, 1)
-        return fmt.Errorf("获取工作目录失败")
+        return []error{fmt.Errorf("获取工作目录失败")}
     }
-    var deletemsg string
+    var deletemsg []error
 	if len(proxy["providers"]) != 0 {
 		var tempProviders []models.Provider
 		var deleteProviders []models.Provider
 		if err := utils.MemoryDb.Find(&tempProviders,proxy["providers"]).Error; err != nil {
 			utils.LoggerCaller("获取待删除机场配置失败", err, 1)
-			return fmt.Errorf("获取待删除机场配置失败")
+			return []error{fmt.Errorf("获取待删除机场配置失败")}
 		}
 		for _,tempProvider := range(tempProviders){
 			md5Label,err := utils.EncryptionMd5(tempProvider.Name)
 			if err != nil {
 				utils.LoggerCaller("加密md5失败",err,1)
-				return fmt.Errorf("加密md5失败")
+				return []error{fmt.Errorf("加密md5失败")}
 			}
 			templates,err := utils.GetValue("templates")
 			if err != nil {
 				utils.LoggerCaller("获取模板配置失败", err, 1)
-				return fmt.Errorf("获取模板配置失败")
+				return []error{fmt.Errorf("获取模板配置失败")}
 			}
 			for key := range(templates.(map[string]models.Template)){
 				if err := utils.FileDelete(filepath.Join(projectDir.(string), "static", key, md5Label + ".json")); err != nil {
@@ -151,54 +151,51 @@ func DeleteProxy(proxy map[string][]int) error{
         }
 		if err := utils.MemoryDb.Delete(&deleteProviders).Error; err != nil {
 			utils.LoggerCaller("删除机场配置失败", err, 1)
-			deletemsg = deletemsg + err.Error()
+			deletemsg = append(deletemsg, fmt.Errorf("删除机场配置失败"))
 		}
     }
 
 	if len(proxy["rulesets"]) != 0 {
 		if err := utils.MemoryDb.Delete(&models.Ruleset{},proxy["rulesets"]).Error; err != nil {
 			utils.LoggerCaller("删除规则集配置失败", err, 1)
-			deletemsg = deletemsg + "," + err.Error()
+			deletemsg = append(deletemsg, fmt.Errorf("删除规则集配置失败"))
 		}
 	}
 	var providers []models.Provider
 	var rulesets []models.Ruleset
 	if err := utils.MemoryDb.Find(&providers).Error; err != nil {
 		utils.LoggerCaller("获取机场配置失败", err, 1)
-        return fmt.Errorf("获取机场配置失败")
+        return []error{fmt.Errorf("获取机场配置失败")}
     }
 	if err := utils.MemoryDb.Find(&rulesets).Error; err != nil {
 		utils.LoggerCaller("获取规则集配置失败", err, 1)
-        return fmt.Errorf("获取规则集配置失败")
+        return []error{fmt.Errorf("获取规则集配置失败")}
     }
 	
 	proxyYaml, err := yaml.Marshal(models.Proxy{Providers: providers,Rulesets: rulesets})
 	if err != nil {
 		
 		utils.LoggerCaller("", err, 1)
-		return fmt.Errorf("marshal Proxy failed")
+		return []error{fmt.Errorf("解析代理配置文件失败")}
 	}
 
 	
 	if err := utils.FileWrite(proxyYaml, filepath.Join(projectDir.(string), "config", "proxy.config.yaml")); err != nil {
 		
 		utils.LoggerCaller("生成代理配置文件失败", err, 1)
-		return fmt.Errorf("生成代理配置文件失败")
+		return []error{fmt.Errorf("生成代理配置文件失败")}
 	}
-	if deletemsg != ""{
-		return fmt.Errorf(deletemsg)
+	if len(deletemsg) != 0{
+		return deletemsg
     }
-	
+	var hosts []models.Host
+	if err := utils.DiskDb.Find(&hosts).Error; err != nil {
+		utils.LoggerCaller("查询主机列表失败", err, 1)
+		return []error{fmt.Errorf("查询主机列表失败")}
+	}
     if len(proxy["providers"]) != 0 {
-        var hosts []models.Host
-        if err := utils.DiskDb.Find(&hosts).Error; err != nil {
-            
-            utils.LoggerCaller("查询主机列表失败", err, 1)
-            return fmt.Errorf("查询主机列表失败")
-        }
         for _,host := range(hosts){
             changeTag := true
-            
             if len(providers) == 0{
                 changeTag = true
             }else{
@@ -212,11 +209,27 @@ func DeleteProxy(proxy map[string][]int) error{
             if changeTag{
                 if err := utils.DiskDb.Model(&models.Host{}).Where("url = ?",host.Url).Update("config","").Error; err != nil{
 					utils.LoggerCaller("更换主机配置失败",err,1)
-                    return fmt.Errorf("更换主机配置失败")
+                    return []error{fmt.Errorf("更换主机配置失败")}
                 }
             }
         }
     }
-    
+	var errs []error
+    if len(proxy["rulesets"]) != 0 {
+		for {
+			if lock.TryLock() {
+				break
+			}
+		}
+		defer lock.Unlock()
+		errs = singbox.Workflow()
+		if len(errs) != 0 {
+			return errs
+		}
+		errs = execute.GroupUpdate(hosts,providers,lock,false)
+		if len(errs) != 0 {
+			return errs
+		}
+    }
     return nil
 }

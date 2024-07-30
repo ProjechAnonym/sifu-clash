@@ -42,7 +42,6 @@ func UpdateFile(originFile, newFile, backupFile string, host models.Host) error{
     if host.Localhost{
         if err := BackupFile(originFile,backupFile,host); err != nil {
             utils.LoggerCaller("备份原文件失败",err,1)
-            return err
         }
         if err := utils.FileCopy(newFile,originFile); err != nil {
             utils.LoggerCaller("设置新配置文件失败",err,1)
