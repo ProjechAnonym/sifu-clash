@@ -5,6 +5,7 @@ import (
 	"sifu-clash/controller"
 	"sifu-clash/middleware"
 	"sifu-clash/utils"
+	"strconv"
 	"sync"
 
 	"github.com/gin-gonic/gin"
@@ -18,21 +19,17 @@ func SettingExec(group *gin.RouterGroup,lock *sync.Mutex,cronTask *cron.Cron,id 
 		addr := ctx.PostForm("addr")
         config := ctx.PostForm("config")
         
-        // 检查config参数是否为空,如果为空,则返回内部服务器错误和错误信息
         if config == "" {
             ctx.JSON(http.StatusInternalServerError, gin.H{"message": "更新配置文件为空"})
             return
         }
         
-        // 调用controller层的Update_config方法来尝试更新配置
-        // 如果更新失败,则记录错误日志并返回内部服务器错误和错误信息
         if err := controller.UpdateConfig(addr, config,lock); err != nil {
             utils.LoggerCaller("更新配置文件失败", err, 1)
             ctx.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
             return
         }
         
-        // 如果更新成功,则返回成功的响应
         ctx.JSON(http.StatusOK, gin.H{"message": true})
 	})
     route.GET("refresh",func(ctx *gin.Context) {
@@ -42,6 +39,48 @@ func SettingExec(group *gin.RouterGroup,lock *sync.Mutex,cronTask *cron.Cron,id 
                 errors[i] = err.Error()
             }
             ctx.JSON(http.StatusInternalServerError, gin.H{"message": errors})
+            return
+        }
+        ctx.JSON(http.StatusOK, gin.H{"message": true})
+    })
+    route.POST("check",func(ctx *gin.Context) {
+        url := ctx.PostForm("url")
+        service := ctx.PostForm("service")
+        status,err := controller.CheckStatus(url,service)
+        if err != nil {
+            ctx.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+            return
+        }
+        if status{
+            ctx.JSON(http.StatusOK, gin.H{"message": true})
+        }else{
+            ctx.JSON(http.StatusOK, gin.H{"message": false})
+        }
+    })
+    route.POST("boot",func(ctx *gin.Context) {
+        url := ctx.PostForm("url")
+        service := ctx.PostForm("service")
+        if err := controller.BootService(url,service,lock); err!=nil{
+            ctx.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+            return
+        }
+        ctx.JSON(http.StatusOK, gin.H{"message": true})
+    })
+    route.POST("interval",func(ctx *gin.Context) {
+        span := ctx.PostFormArray("span")
+        timeSpan := make([]int,len(span))
+        var err error
+        for i,num := range(span){
+            timeSpan[i],err = strconv.Atoi(num)
+            if err != nil{
+                ctx.JSON(http.StatusBadRequest,gin.H{
+                    "message": "间隔必须是整数",
+                })
+                return
+            }
+        }
+        if err := controller.SetInterval(timeSpan,cronTask,id,lock); err != nil{
+            ctx.JSON(http.StatusInternalServerError, gin.H{"message": false})
             return
         }
         ctx.JSON(http.StatusOK, gin.H{"message": true})

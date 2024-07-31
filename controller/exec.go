@@ -7,6 +7,8 @@ import (
 	"sifu-clash/singbox"
 	"sifu-clash/utils"
 	"sync"
+
+	"github.com/robfig/cron/v3"
 )
 
 func UpdateConfig(addr, config string,lock *sync.Mutex) error {
@@ -97,5 +99,82 @@ func RefreshItems(lock *sync.Mutex) []error {
         }
     }
     // 更新完成,返回nil表示无错误
+    return nil
+}
+func CheckStatus(addr, service string) (bool, error) {
+    var host models.Host
+    if err := utils.DiskDb.Model(&host).Where("url = ?", addr).First(&host).Error; err != nil {
+        utils.LoggerCaller("获取主机失败", err, 1)
+        return false, fmt.Errorf("获取主机失败")
+    }
+    status, err := execute.CheckService(service, host)
+    if err != nil {
+        utils.LoggerCaller("检查服务进程失败", err, 1)
+        return false, fmt.Errorf("检查服务进程失败")
+    }
+    return status, nil
+}
+func BootService(addr, service string, lock *sync.Mutex) error {
+    var host models.Host
+    if err := utils.DiskDb.Model(&host).Where("url = ?", addr).First(&host).Error; err != nil {
+        utils.LoggerCaller("获取主机失败", err, 1)
+        return fmt.Errorf("获取主机失败")
+    }
+
+    for {
+        if lock.TryLock() {
+            break
+        }
+    }
+    defer lock.Unlock()
+
+    if err := execute.BootService(service, host); err != nil {
+        utils.LoggerCaller("启动服务失败", err, 1)
+        return fmt.Errorf("启动服务失败")
+    }
+
+    return nil
+}
+
+func SetInterval(span []int, cronTask *cron.Cron, id *cron.EntryID, lock *sync.Mutex) error {
+    var newTime string
+    switch len(span) {
+    case 0:
+        newTime = ""
+    case 1:
+        newTime = fmt.Sprintf("*/%d * * * *",span[0])
+    case 2:
+        newTime = fmt.Sprintf("%d %d * * *",span[0],span[1])
+    case 3:
+        newTime = fmt.Sprintf("%d %d * * %d",span[0],span[1],span[2])
+    }
+    cronTask.Remove(*id)
+    var err error
+    if newTime != "" {
+        *id,err = cronTask.AddFunc(newTime, func() {
+            for {
+                if lock.TryLock() {
+                    break
+                }
+            }
+            defer lock.Unlock()
+            singbox.Workflow()
+            var hosts []models.Host
+            var providers []models.Provider
+            if err := utils.DiskDb.Find(&hosts).Error; err != nil {
+                utils.LoggerCaller("获取主机列表失败", err, 1)
+                return
+            }
+            if err := utils.MemoryDb.Find(&providers).Error; err != nil {
+                utils.LoggerCaller("获取代理信息失败", err, 1)
+                return
+            }
+            execute.GroupUpdate(hosts, providers, lock, false)
+        })
+        if err != nil{
+            utils.LoggerCaller("修改定时任务失败", err, 1)
+            return fmt.Errorf("修改定时任务失败")
+        }
+    }
     return nil
 }

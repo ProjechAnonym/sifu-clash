@@ -3,14 +3,14 @@ providers:
       proxy: false
       path: https://naiyun0315.xn--8stx8olrwkucjq3b.com/api/v1/client/subscribe?token=745f0f059c5256cf9b2e4cc4fc87ee81
       remote: true
-    # - name: 一元
-    #   proxy: true
-    #   path: https://sub2.smallstrawberry.com/api/v1/client/subscribe?token=01b5b92d76a64a1bbe331c77c53e818a
-    #   remote: true
-    # - name: 一元机场
-    #   proxy: true
-    #   path: https://sub2.smallstrawberry.com/api/v1/client/subscribe?token=01b5b92d76a64a1bbe331c77c53e818a
-    #   remote: true
+    - name: 一元
+      proxy: true
+      path: https://sub2.smallstrawberry.com/api/v1/client/subscribe?token=01b5b92d76a64a1bbe331c77c53e818a
+      remote: true
+    - name: 一元机场
+      proxy: true
+      path: https://sub2.smallstrawberry.com/api/v1/client/subscribe?token=01b5b92d76a64a1bbe331c77c53e818a
+      remote: true
 rulesets:
     - type: remote
       url: https://github.com/MetaCubeX/meta-rules-dat/raw/sing/geo/geoip/cn.srs

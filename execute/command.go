@@ -103,7 +103,6 @@ func BootService(service string,host models.Host) error{
 
 func CheckService(service string,host models.Host) (bool,error){
 	status := false
-
 	var results,errors []string
 	var err error
 	if host.Localhost{
@@ -111,15 +110,14 @@ func CheckService(service string,host models.Host) (bool,error){
 	}else{
 		results,errors,err = utils.CommandSsh(host,"systemctl", "status", service)
 	}
-	if err != nil && err.Error() != "exit status 3" {
-		utils.LoggerCaller("获取服务运行状态失败",err,1)
-		return false,err
+	if (!strings.Contains(err.Error(), "exit status") && host.Localhost) || (!strings.Contains(err.Error(), "exited with status") && !host.Localhost){
+		return false, err
 	}
 	if len(errors) != 0{
 		utils.LoggerCaller("错误",fmt.Errorf("命令出现错误返回"),1)
 		return false,fmt.Errorf("命令出现错误返回")
 	}
-	for _,result := range(results){
+	for _,result := range(results) {
 		if strings.Contains(result,"active (running)"){
 			status = true
 			break
@@ -127,3 +125,4 @@ func CheckService(service string,host models.Host) (bool,error){
 	}
 	return status,nil
 }
+
