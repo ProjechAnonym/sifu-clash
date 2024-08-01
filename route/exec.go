@@ -2,9 +2,9 @@ package route
 
 import (
 	"net/http"
-	"sifu-clash/controller"
-	"sifu-clash/middleware"
-	"sifu-clash/utils"
+	"sifu-box/controller"
+	"sifu-box/middleware"
+	"sifu-box/utils"
 	"strconv"
 	"sync"
 

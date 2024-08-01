@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"path/filepath"
-	"sifu-clash/models"
-	"sifu-clash/utils"
+	"sifu-box/models"
+	"sifu-box/utils"
 	"sync"
 
 	"github.com/huandu/go-clone"

@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"net/http"
 	"path/filepath"
-	"sifu-clash/controller"
-	"sifu-clash/middleware"
-	"sifu-clash/utils"
+	"sifu-box/controller"
+	"sifu-box/middleware"
+	"sifu-box/utils"
 
 	"github.com/gin-gonic/gin"
 )

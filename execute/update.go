@@ -2,8 +2,8 @@ package execute
 
 import (
 	"path/filepath"
-	"sifu-clash/models"
-	"sifu-clash/utils"
+	"sifu-box/models"
+	"sifu-box/utils"
 )
 
 // BackupFile 备份指定文件如果指定的主机是本地主机,则直接在本地进行操作；否则通过SFTP进行远程操作

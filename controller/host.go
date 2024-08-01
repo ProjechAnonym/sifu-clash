@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net"
 	"net/url"
-	"sifu-clash/utils"
+	"sifu-box/utils"
 )
 
 // IsLocalhost 检查给定的URL是否指向本地主机

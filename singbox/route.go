@@ -2,7 +2,7 @@ package singbox
 
 import (
 	"fmt"
-	"sifu-clash/models"
+	"sifu-box/models"
 )
 
 // SetRulesets 根据给定的服务映射创建新的规则集列表

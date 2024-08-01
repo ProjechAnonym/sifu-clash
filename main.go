@@ -3,12 +3,12 @@ package main
 import (
 	"os"
 	"path/filepath"
-	"sifu-clash/execute"
-	"sifu-clash/middleware"
-	"sifu-clash/models"
-	"sifu-clash/route"
-	"sifu-clash/singbox"
-	"sifu-clash/utils"
+	"sifu-box/execute"
+	"sifu-box/middleware"
+	"sifu-box/models"
+	"sifu-box/route"
+	"sifu-box/singbox"
+	"sifu-box/utils"
 	"sync"
 
 	"github.com/gin-contrib/cors"

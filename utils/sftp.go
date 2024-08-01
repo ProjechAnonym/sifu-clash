@@ -4,7 +4,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"sifu-clash/models"
+	"sifu-box/models"
 
 	"github.com/pkg/sftp"
 	"golang.org/x/crypto/ssh"

@@ -3,7 +3,7 @@ package singbox
 import (
 	"encoding/base64"
 	"encoding/json"
-	"sifu-clash/models"
+	"sifu-box/models"
 	"strconv"
 	"strings"
 )

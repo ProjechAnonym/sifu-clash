@@ -1,8 +1,8 @@
 package middleware
 
 import (
-	"sifu-clash/models"
-	"sifu-clash/utils"
+	"sifu-box/models"
+	"sifu-box/utils"
 	"time"
 
 	"github.com/gin-contrib/cors"

@@ -2,7 +2,7 @@ package singbox
 
 import (
 	"fmt"
-	"sifu-clash/utils"
+	"sifu-box/utils"
 	"strings"
 )
 

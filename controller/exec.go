@@ -2,10 +2,10 @@ package controller
 
 import (
 	"fmt"
-	"sifu-clash/execute"
-	"sifu-clash/models"
-	"sifu-clash/singbox"
-	"sifu-clash/utils"
+	"sifu-box/execute"
+	"sifu-box/models"
+	"sifu-box/singbox"
+	"sifu-box/utils"
 	"sync"
 
 	"github.com/robfig/cron/v3"

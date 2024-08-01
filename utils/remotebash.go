@@ -3,7 +3,7 @@ package utils
 import (
 	"bufio"
 	"fmt"
-	"sifu-clash/models"
+	"sifu-box/models"
 	"strings"
 	"sync"
 

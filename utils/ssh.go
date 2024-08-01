@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"net"
 	"net/url"
-	"sifu-clash/models"
+	"sifu-box/models"
 
 	"golang.org/x/crypto/ssh"
 )
+
 // tempKeyCallback is a callback function for adding a temporary key to the known_hosts file.
 // Its main purpose is to update or verify the fingerprint of a host in the database based on the provided host and key.
 // Parameters:

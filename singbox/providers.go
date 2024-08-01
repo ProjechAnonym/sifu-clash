@@ -3,7 +3,7 @@ package singbox
 import (
 	"encoding/base64"
 	"fmt"
-	"sifu-clash/utils"
+	"sifu-box/utils"
 	"strings"
 
 	"github.com/gocolly/colly/v2"

@@ -2,7 +2,7 @@ package singbox
 
 import (
 	"net/url"
-	"sifu-clash/models"
+	"sifu-box/models"
 	"strconv"
 	"strings"
 )

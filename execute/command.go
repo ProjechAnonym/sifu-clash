@@ -2,8 +2,8 @@ package execute
 
 import (
 	"fmt"
-	"sifu-clash/models"
-	"sifu-clash/utils"
+	"sifu-box/models"
+	"sifu-box/utils"
 	"strings"
 )
 

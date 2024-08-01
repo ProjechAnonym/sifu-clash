@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net/url"
 	"path/filepath"
-	"sifu-clash/models"
-	"sifu-clash/utils"
+	"sifu-box/models"
+	"sifu-box/utils"
 	"sync"
 )
 

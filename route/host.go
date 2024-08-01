@@ -2,10 +2,10 @@ package route
 
 import (
 	"net/http"
-	"sifu-clash/controller"
-	"sifu-clash/middleware"
-	"sifu-clash/models"
-	"sifu-clash/utils"
+	"sifu-box/controller"
+	"sifu-box/middleware"
+	"sifu-box/models"
+	"sifu-box/utils"
 
 	"github.com/gin-gonic/gin"
 )

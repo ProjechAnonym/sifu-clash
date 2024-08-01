@@ -3,8 +3,8 @@ package singbox
 import (
 	"fmt"
 	"os"
-	"sifu-clash/models"
-	"sifu-clash/utils"
+	"sifu-box/models"
+	"sifu-box/utils"
 
 	"gopkg.in/yaml.v3"
 )

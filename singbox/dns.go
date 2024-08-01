@@ -1,6 +1,6 @@
 package singbox
 
-import "sifu-clash/models"
+import "sifu-box/models"
 
 func SetDnsRules(serviceMap map[string][]models.Ruleset) []map[string]interface{}{
 	var rules []map[string]interface{}

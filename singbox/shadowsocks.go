@@ -4,7 +4,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"net/url"
-	"sifu-clash/models"
+	"sifu-box/models"
 	"strconv"
 	"strings"
 )

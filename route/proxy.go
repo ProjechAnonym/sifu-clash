@@ -3,10 +3,10 @@ package route
 import (
 	"net/http"
 	"path/filepath"
-	"sifu-clash/controller"
-	"sifu-clash/middleware"
-	"sifu-clash/models"
-	"sifu-clash/utils"
+	"sifu-box/controller"
+	"sifu-box/middleware"
+	"sifu-box/models"
+	"sifu-box/utils"
 	"strings"
 	"sync"
 

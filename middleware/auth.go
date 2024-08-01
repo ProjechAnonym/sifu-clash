@@ -2,8 +2,8 @@ package middleware
 
 import (
 	"net/http"
-	"sifu-clash/models"
-	"sifu-clash/utils"
+	"sifu-box/models"
+	"sifu-box/utils"
 
 	"github.com/gin-gonic/gin"
 )

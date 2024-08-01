@@ -6,8 +6,8 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
-	"sifu-clash/models"
-	"sifu-clash/utils"
+	"sifu-box/models"
+	"sifu-box/utils"
 	"strings"
 )
 

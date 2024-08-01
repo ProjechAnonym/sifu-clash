@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"sifu-clash/models"
+	"sifu-box/models"
 	"strings"
 
 	"github.com/glebarez/sqlite"
