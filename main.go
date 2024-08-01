@@ -46,7 +46,7 @@ func main() {
 	if serverMode.(models.Server).Mode {
 		var lock sync.Mutex
 		cronTask := cron.New()
-		cronId,_ := cronTask.AddFunc("@every 1m",func() {
+		cronId,_ := cronTask.AddFunc("30 4 * * 1",func() {
 			utils.LoggerCaller("定时任务启动",nil,1)
 			var hosts []models.Host
 			if err := utils.DiskDb.Find(&hosts).Error; err != nil {
