@@ -3,13 +3,17 @@ providers:
       proxy: false
       path: https://naiyun0315.xn--8stx8olrwkucjq3b.com/api/v1/client/subscribe?token=745f0f059c5256cf9b2e4cc4fc87ee81
       remote: true
-    - name: 一元
+    - name: 奈云7
       proxy: true
-      path: https://sub2.smallstrawberry.com/api/v1/client/subscribe?token=01b5b92d76a64a1bbe331c77c53e818a
+      path: https://naiyun0315.xn--8stx8olrwkucjq3b.com/api/v1/client/subscribe?token=745f0f059c5256cf9b2e4cc4fc87ee81
       remote: true
-    - name: 一元机场
+    - name: 奈云6
       proxy: true
-      path: https://sub2.smallstrawberry.com/api/v1/client/subscribe?token=01b5b92d76a64a1bbe331c77c53e818a
+      path: https://naiyun0315.xn--8stx8olrwkucjq3b.com/api/v1/client/subscribe?token=745f0f059c5256cf9b2e4cc4fc87ee81
+      remote: true
+    - name: 一速云
+      proxy: true
+      path: https://sub1.smallstrawberry.com/api/v1/client/subscribe?token=59e183a0cafb418a85f8b09854735c31
       remote: true
 rulesets:
     - type: remote

@@ -198,19 +198,26 @@ func DeleteProxy(proxy map[string][]int,lock *sync.Mutex) []error{
 				return []error{fmt.Errorf("获取模板配置失败")}
 			}
 			// 遍历模板,删除相关配置文件
+			var deleteTag bool
 			for key := range(templates.(map[string]models.Template)){
 				if err := utils.FileDelete(filepath.Join(projectDir.(string), "static", key, md5Label + ".json")); err != nil {
 					utils.LoggerCaller(fmt.Sprintf("删除'%s'目录下的'%s'配置文件失败",key,tempProvider.Name),err,1)
+					deleteTag = false
+				}else{
+					deleteTag = true
 				}
 			}
 			// 如果提供者不是远程的,删除其yaml文件
 			if !tempProvider.Remote{
 				if err := utils.FileDelete(tempProvider.Path); err != nil {
 					utils.LoggerCaller("删除yaml文件失败",err,1)
+					deleteTag = false
 				}else {
-					// 将删除的提供者添加到deleteProviders切片
-					deleteProviders = append(deleteProviders, tempProvider)
+					deleteTag = true
 				}
+			}
+			if deleteTag {
+				deleteProviders = append(deleteProviders,tempProvider)
 			}
         }
 		// 从数据库中删除提供者配置
