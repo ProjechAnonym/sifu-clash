@@ -183,11 +183,13 @@ func CheckService(service string, host models.Host) (bool, error) {
     } else {
         results, errors, err = utils.CommandSsh(host, "systemctl", "status", service)
     }
-
     // 检查错误信息,如果错误信息中不包含特定的退出状态说明,返回错误
-    if (!strings.Contains(err.Error(), "exit status") && host.Localhost) || (!strings.Contains(err.Error(), "exited with status") && !host.Localhost) {
-        return false, err
+    if err != nil {
+        if (!strings.Contains(err.Error(), "exit status") && host.Localhost) || (!strings.Contains(err.Error(), "exited with status") && !host.Localhost) {
+            return false, err
+        }
     }
+
 
     // 如果有命令执行错误,记录错误并返回false
     if len(errors) != 0 {
