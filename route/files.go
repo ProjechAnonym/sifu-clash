@@ -46,7 +46,7 @@ func SettingFiles(group *gin.RouterGroup) {
         }
         
         // 设置响应头,指定下载文件的名称
-        ctx.Header("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, label))
+        ctx.Header("Content-Disposition", fmt.Sprintf(`attachment; filename="%s.json"`, label))
         // 设置响应头,指定文件的MIME类型
         ctx.Header("Content-Type", "application/octet-stream")
         // 发送文件响应
