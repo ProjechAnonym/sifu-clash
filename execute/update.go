@@ -80,7 +80,7 @@ func UpdateFile(originFile, newFile, backupFile string, host models.Host) error{
         // 读取新文件内容,准备上传到远程主机
         content,err := utils.FileRead(newFile)
         if err != nil {
-            utils.LoggerCaller("read new config file failed",err,1)
+            utils.LoggerCaller("设置新配置文件失败",err,1)
             return err
         }
         // 将新文件内容上传到远程主机
