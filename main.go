@@ -64,6 +64,7 @@ func main() {
 		gin.SetMode(gin.ReleaseMode)
 		server := gin.Default()
 		server.Use(middleware.Logger(),middleware.Recovery(true),cors.New(middleware.Cors()))
+		route.SettingPages(server)
 		apiGroup := server.Group("/api")
 		apiGroup.GET("verify",middleware.TokenAuth())
 		route.SettingHost(apiGroup)
