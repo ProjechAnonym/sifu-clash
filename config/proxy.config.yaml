@@ -17,14 +17,6 @@ providers:
       remote: true
 rulesets:
     - type: remote
-      url: https://github.com/MetaCubeX/meta-rules-dat/raw/sing/geo/geoip/cn.srs
-      format: binary
-      tag: china-ip
-      download_detour: select
-      update_interval: 1d
-      label: china
-      china: true
-    - type: remote
       url: https://github.com/MetaCubeX/meta-rules-dat/raw/sing/geo/geosite/cn.srs
       format: binary
       tag: china-site
@@ -34,10 +26,10 @@ rulesets:
       china: true
       dnsRule: internal
     - type: remote
-      url: https://github.com/MetaCubeX/meta-rules-dat/raw/sing/geo/geosite/youtube.srs
+      url: https://github.com/MetaCubeX/meta-rules-dat/raw/sing/geo/geoip/cn.srs
       format: binary
-      tag: youtube
+      tag: china-ip
       download_detour: select
       update_interval: 1d
-      china: false
-      dnsRule: external
+      label: china
+      china: true

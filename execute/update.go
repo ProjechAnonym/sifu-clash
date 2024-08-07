@@ -76,7 +76,6 @@ func UpdateFile(originFile, newFile, backupFile string, host models.Host) error{
         // 对于远程主机,先备份原文件
         if err := BackupFile(originFile,backupFile,host); err != nil {
             utils.LoggerCaller("备份原文件失败",err,1)
-            return err
         }
         // 读取新文件内容,准备上传到远程主机
         content,err := utils.FileRead(newFile)
