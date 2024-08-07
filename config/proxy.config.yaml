@@ -33,3 +33,10 @@ rulesets:
       update_interval: 1d
       label: china
       china: true
+    - type: remote
+      url: https://github.com/MetaCubeX/meta-rules-dat/raw/sing/geo/geoip/cn.srs
+      format: source
+      tag: das
+      download_detour: sa
+      update_interval: 1d
+      china: false

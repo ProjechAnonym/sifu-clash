@@ -80,7 +80,7 @@ func SettingProxy(group *gin.RouterGroup, lock *sync.Mutex) {
             for _, addErr := range errs {
                 errors = append(errors, addErr.Error())
             }
-            ctx.JSON(http.StatusInternalServerError, gin.H{"error": errors})
+            ctx.JSON(http.StatusInternalServerError, gin.H{"message": errors})
             return
         }
 
